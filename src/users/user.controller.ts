@@ -14,12 +14,12 @@ import {
   Req,
   ForbiddenException,
 } from '@nestjs/common';
-import { UserService } from '../services/user.service';
-import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
-import { AdminGuard } from '../../guards/admin.guard';
-import { CreateUserDto, UpdateUserDto } from '../dto/user.dto';
+import { UserService } from './user.service';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { AdminGuard } from '../guards/admin.guard';
+import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { Request } from 'express';
-import { UserPayload } from '../../guards/jwt-auth.guard';
+import { UserPayload } from '../guards/jwt-auth.guard';
 
 @Controller('users')
 export class UserController {
@@ -69,19 +69,19 @@ export class UserController {
   }
 
   // Create a new user - Admin only
-  @UseGuards(AdminGuard)
-  @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
-    // Check if user with email already exists
-    const existingUser = await this.userService.findByEmail(
-      createUserDto.email,
-    );
-    if (existingUser) {
-      throw new ConflictException('User with this email already exists');
-    }
+  // @UseGuards(AdminGuard)
+  // @Post()
+  // async create(@Body() createUserDto: CreateUserDto) {
+  //   // Check if user with email already exists
+  //   const existingUser = await this.userService.findByEmail(
+  //     createUserDto.email,
+  //   );
+  //   if (existingUser) {
+  //     throw new ConflictException('User with this email already exists');
+  //   }
 
-    return this.userService.create(createUserDto);
-  }
+  //   return this.userService.create(createUserDto);
+  // }
 
   // Update user - Admin or own user only
   @UseGuards(JwtAuthGuard)

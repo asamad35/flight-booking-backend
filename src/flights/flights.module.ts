@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { FlightsController } from './flights.controller';
-import { JwtModule } from '../jwt/jwt.module';
-import { UserModule } from '../users/user.module';
+import { FlightsService } from './flights.service';
+import { FlightsRepository } from './flights.repository';
 
 @Module({
-  imports: [JwtModule, UserModule],
   controllers: [FlightsController],
+  providers: [FlightsService, FlightsRepository],
+  exports: [FlightsService],
 })
 export class FlightsModule {}

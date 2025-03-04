@@ -1,76 +1,75 @@
-import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  UseGuards,
+  Req,
+  Param,
+  Query,
+} from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Request } from 'express';
-import { UserPayload } from '../guards/jwt-auth.guard';
-
-interface FlightDto {
-  destination: string;
-  departureDate: string;
-  returnDate?: string;
-  passengers: number;
-}
+import { User } from '../decorators/user.decorator';
+import { FlightsService } from './flights.service';
+import { FlightDto } from './dto/flight.dto';
+import { FlightSearchDto } from './dto/flight-search.dto';
 
 @Controller('flights')
 export class FlightsController {
+  constructor(private readonly flightsService: FlightsService) {}
+
   // Public endpoint - no authentication required
   @Get('public')
   getPublicFlights() {
-    return {
-      flights: [
-        { id: 1, destination: 'New York', price: 350 },
-        { id: 2, destination: 'London', price: 500 },
-        { id: 3, destination: 'Tokyo', price: 900 },
-      ],
-    };
+    return this.flightsService.getPublicFlights();
   }
 
-  // Protected endpoint - requires authentication
-  @UseGuards(JwtAuthGuard)
+  // Public endpoint for searching flights - no authentication required
   @Get()
-  getFlights(@Req() request: Request) {
-    // Access the authenticated user information
-    const user = request['user'] as UserPayload;
-
-    return {
-      message: `Flights for user: ${user.email}`,
-      flights: [
-        {
-          id: 1,
-          destination: 'New York',
-          price: 350,
-          departureDate: '2024-09-15',
-        },
-        {
-          id: 2,
-          destination: 'London',
-          price: 500,
-          departureDate: '2024-10-20',
-        },
-        {
-          id: 3,
-          destination: 'Tokyo',
-          price: 900,
-          departureDate: '2024-11-05',
-        },
-      ],
-    };
+  async getFlights(
+    @Query() filters: FlightSearchDto,
+    @User() user?: { id: string },
+  ) {
+    const userId = user?.id || null;
+    return this.flightsService.getFlights(userId, filters);
   }
 
   // Protected endpoint - requires authentication
+  @Post('booking')
   @UseGuards(JwtAuthGuard)
-  @Post('book')
-  bookFlight(@Body() flightDto: FlightDto, @Req() request: Request) {
-    const user = request['user'] as UserPayload;
+  async bookFlight(@Body() flightDto: FlightDto, @User() user: { id: string }) {
+    return this.flightsService.bookFlight(flightDto, user.id);
+  }
 
-    return {
-      message: 'Flight booked successfully',
-      booking: {
-        id: Math.floor(Math.random() * 1000),
-        user: user.email,
-        ...flightDto,
-        status: 'confirmed',
-        bookedAt: new Date().toISOString(),
-      },
-    };
+  @Get('bookings')
+  @UseGuards(JwtAuthGuard)
+  async getUserBookings(@User() user: { id: string }) {
+    return this.flightsService.getUserBookings(user.id);
+  }
+
+  @Get('bookings/:id')
+  @UseGuards(JwtAuthGuard)
+  async getBookingById(@Param('id') id: string, @User() user: { id: string }) {
+    return this.flightsService.getBookingById(id, user.id);
+  }
+
+  @Get('cities/origin')
+  getOriginCities() {
+    return this.flightsService.getOriginCities();
+  }
+
+  @Get('cities/destination')
+  getDestinationCities() {
+    return this.flightsService.getDestinationCities();
+  }
+
+  @Get('bookings/:id/ticket')
+  @UseGuards(JwtAuthGuard)
+  async generateTicket(
+    @Param('id') bookingId: string,
+    @User() user: { id: string },
+  ) {
+    return this.flightsService.generateTicket(bookingId, user.id);
   }
 }
