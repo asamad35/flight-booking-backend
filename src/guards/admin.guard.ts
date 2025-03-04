@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { JwtService } from '@nestjs/jwt';
-import { UserService } from '../users/services/user.service';
+import { UserService } from '../users/user.service';
 
 @Injectable()
 export class AdminGuard extends JwtAuthGuard {

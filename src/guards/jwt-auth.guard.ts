@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { UserService } from '../users/services/user.service';
+import { UserService } from '../users/user.service';
 import axios from 'axios';
 
 // User payload interface for type safety
