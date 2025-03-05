@@ -46,13 +46,13 @@ export class JwtAuthGuard implements CanActivate {
       }
 
       // call user api to get the user
-      const user = await this.userService.findById(id);
+      const user = await this.userService.findByEmail(email);
 
       // Attach user to request for later use
       request['user'] = {
-        id: id,
-        email: email,
-        full_name: full_name,
+        id: user?.id,
+        email: user?.email,
+        full_name: user?.full_name,
         role: user?.role,
       };
       return true;
