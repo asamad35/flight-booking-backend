@@ -28,8 +28,6 @@ export class AdminGuard extends JwtAuthGuard {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
 
-    user.role = 'admin';
-
     if (user.role !== 'admin') {
       throw new ForbiddenException('Access denied. Admin privileges required.');
     }

@@ -45,11 +45,15 @@ export class JwtAuthGuard implements CanActivate {
         throw new UnauthorizedException('Email not verified');
       }
 
+      // call user api to get the user
+      const user = await this.userService.findById(id);
+
       // Attach user to request for later use
       request['user'] = {
         id: id,
         email: email,
         full_name: full_name,
+        role: user?.role,
       };
       return true;
     } catch (error) {
