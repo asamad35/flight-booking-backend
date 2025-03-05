@@ -1,98 +1,374 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Flight Booking API Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Overview
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This is the backend service for a Flight Booking application, built with NestJS. It provides robust APIs for flight search, booking management, and user authentication with role-based access control. The service connects to a Supabase database for data storage and uses JWT for secure authentication.
 
-## Description
+## Features
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- 🔍 **Flight Search**: Advanced filtering by destination, date, price, and airlines
+- 🛫 **Flight Booking Management**: Create, view, update, and cancel bookings
+- 👤 **User Management**: Registration, authentication, and profile management
+- 👑 **Admin Dashboard**: Administrative features for managing flights, bookings, and users
+- 🔒 **Role-Based Access Control**: Different permissions for users and administrators
+- 🔐 **JWT-based Authentication**: Secure token-based authentication system
+- 📖 **API Documentation**: Interactive Swagger UI documentation
+- 🐳 **Docker Support**: Containerized deployment with Docker and Docker Compose
+- 🧪 **Testing**: Comprehensive unit and e2e tests
 
-## Project setup
+## Tech Stack
+
+- **Framework**: NestJS (Node.js)
+- **Language**: TypeScript
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: JWT (JSON Web Tokens)
+- **Documentation**: Swagger/OpenAPI
+- **Testing**: Jest
+- **Containerization**: Docker & Docker Compose
+- **API Design**: RESTful principles
+- **Error Handling**: Global exception filters
+
+## Prerequisites
+
+- Node.js (v16+)
+- npm or yarn
+- Docker and Docker Compose (for containerized deployment)
+- Supabase account and project setup
+- Git
+
+## Installation
+
+1. **Clone the repository**:
+
+   ```bash
+   git clone <repository-url>
+   cd flight-booking/backend
+   ```
+
+2. **Install dependencies**:
+
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+3. **Configure environment variables**:
+
+   - Copy `.env.example` to `.env` (or create a new `.env` file)
+   - Update the environment variables with your Supabase credentials and other settings:
+
+   ```
+   SUPABASE_URL=your-supabase-url
+   SUPABASE_KEY=your-supabase-anon-key
+   SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
+   PORT=3333
+   JWT_SECRET=your-jwt-secret
+   JWT_EXPIRATION=8h
+   ```
+
+## Development
+
+### Start the development server:
 
 ```bash
-$ npm install
+npm run start:dev
+# or
+yarn start:dev
 ```
 
-## Compile and run the project
+The API will be available at http://localhost:3333.
+
+### Linting and formatting:
 
 ```bash
-# development
-$ npm run start
+# Run ESLint
+npm run lint
 
-# watch mode
-$ npm run start:dev
+# Fix linting issues
+npm run lint:fix
 
-# production mode
-$ npm run start:prod
+# Format code with Prettier
+npm run format
 ```
 
-## Run tests
+## Database Setup
+
+This application requires a Supabase database with specific tables for flights, cities, users, and bookings.
+
+### Auto Setup
+
+You can set up the database automatically using the provided scripts:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run setup
 ```
 
-## Deployment
+### Manual Database Setup
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+If you prefer to set up tables manually, create the following tables in your Supabase project:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+1. **Users Table**:
+
+   - id (UUID, primary key)
+   - email (string, unique)
+   - password (string, hashed)
+   - firstName (string)
+   - lastName (string)
+   - role (string: 'user' or 'admin')
+   - created_at (timestamp)
+
+2. **Flights Table**:
+
+   - id (UUID, primary key)
+   - destination (string)
+   - departureDate (date)
+   - price (decimal)
+   - airline (string)
+   - flightNumber (string)
+   - departureAirport (string)
+   - arrivalAirport (string)
+   - departureTime (time)
+   - arrivalTime (time)
+   - duration (string)
+   - stops (integer)
+
+3. **Bookings Table**:
+   - id (UUID, primary key)
+   - bookingId (string)
+   - userId (UUID, foreign key)
+   - flightId (UUID, foreign key)
+   - bookingDate (timestamp)
+   - departureDate (date)
+   - totalPrice (decimal)
+   - passengers (integer)
+   - cabinClass (string)
+   - status (string)
+   - created_at (timestamp)
+
+## API Documentation
+
+The API is documented using Swagger UI. When the application is running, you can access the interactive documentation at:
+
+```
+http://localhost:3333/api/docs
+```
+
+## Project Structure
+
+```
+flight-booking/backend/
+├── dist/                        # Compiled JavaScript output
+│   ├── app.controller.d.ts
+│   ├── app.controller.js
+│   ├── app.controller.js.map
+│   ├── app.module.d.ts
+│   ├── app.module.js
+│   ├── app.module.js.map
+│   ├── app.service.d.ts
+│   ├── app.service.js
+│   ├── app.service.js.map
+│   ├── data/
+│   │   ├── mock-booking.d.ts
+│   │   ├── mock-booking.js
+│   │   ├── mock-booking.js.map
+│   │   ├── mock-cities.d.ts
+│   │   ├── mock-cities.js
+│   │   ├── mock-cities.js.map
+│   │   ├── mock-flights.d.ts
+│   │   ├── mock-flights.js
+│   │   └── mock-flights.js.map
+│   ├── decorators/
+│   │   ├── user.decorator.d.ts
+│   │   ├── user.decorator.js
+│   │   ├── user.decorator.js.map
+│   │   ├── roles.decorator.d.ts
+│   │   ├── roles.decorator.js
+│   │   └── roles.decorator.js.map
+│   ├── filters/
+│   │   ├── http-exception.filter.d.ts
+│   │   ├── http-exception.filter.js
+│   │   └── http-exception.filter.js.map
+│   ├── flights/
+│   │   ├── dto/
+│   │   ├── interfaces/
+│   │   ├── utils/
+│   │   ├── flights.controller.js
+│   │   ├── flights.module.js
+│   │   ├── flights.service.js
+│   │   └── flights.repository.js
+│   ├── users/
+│   │   ├── dto/
+│   │   │   ├── create-user.dto.ts
+│   │   │   ├── update-user.dto.ts
+│   │   │   └── login.dto.ts
+│   │   ├── interfaces/
+│   │   │   └── user.interface.ts
+│   │   ├── user.controller.js
+│   │   ├── user.module.js
+│   │   ├── user.service.js
+│   │   └── user.repository.js
+│   ├── jwt/
+│   │   ├── jwt.module.js
+│   │   ├── jwt.service.js
+│   │   └── jwt.strategy.js
+│   ├── guards/
+│   │   ├── jwt-auth.guard.js
+│   │   └── roles.guard.js
+│   └── main.js
+├── node_modules/              # Node.js dependencies
+├── src/                       # Source code
+│   ├── main.ts                # Application entry point
+│   ├── app.module.ts          # Root module
+│   ├── app.controller.ts      # Root controller
+│   ├── app.service.ts         # Root service
+│   ├── data/                  # Mock/seed data
+│   │   ├── mock-booking.ts
+│   │   ├── mock-cities.ts
+│   │   └── mock-flights.ts
+│   ├── flights/               # Flight-related features
+│   │   ├── dto/               # Data Transfer Objects
+│   │   │   ├── create-flight.dto.ts
+│   │   │   ├── update-flight.dto.ts
+│   │   │   ├── flight-search.dto.ts
+│   │   │   └── booking.dto.ts
+│   │   ├── interfaces/        # TypeScript interfaces
+│   │   │   ├── flight.interface.ts
+│   │   │   └── booking.interface.ts
+│   │   ├── utils/
+│   │   │   └── flight.enums.ts
+│   │   ├── flights.controller.ts
+│   │   ├── flights.module.ts
+│   │   ├── flights.service.ts
+│   │   └── flights.repository.ts
+│   ├── users/                 # User management features
+│   │   ├── dto/
+│   │   │   ├── create-user.dto.ts
+│   │   │   ├── update-user.dto.ts
+│   │   │   └── login.dto.ts
+│   │   ├── interfaces/
+│   │   │   └── user.interface.ts
+│   │   ├── user.controller.ts
+│   │   ├── user.module.ts
+│   │   ├── user.service.ts
+│   │   └── user.repository.ts
+│   ├── jwt/                   # JWT authentication
+│   │   ├── jwt.module.ts
+│   │   ├── jwt.service.ts
+│   │   └── jwt.strategy.ts
+│   ├── guards/                # Authentication guards
+│   │   ├── jwt-auth.guard.ts
+│   │   └── roles.guard.ts     # Role-based authorization guard
+│   ├── decorators/            # Custom decorators
+│   │   ├── user.decorator.ts
+│   │   └── roles.decorator.ts # Role-based access control decorator
+│   ├── filters/               # Exception filters
+│   │   └── http-exception.filter.ts
+│   └── utils/                 # Utility functions
+│       └── validation.helpers.ts
+├── test/                      # Test files
+│   ├── app.e2e-spec.ts
+│   ├── flights.e2e-spec.ts
+│   ├── users.e2e-spec.ts
+│   └── jest-e2e.json
+├── .dockerignore              # Docker ignore file
+├── .env                       # Environment variables
+├── .gitignore                 # Git ignore file
+├── .prettierrc                # Prettier configuration
+├── docker-compose.yml         # Docker Compose configuration
+├── Dockerfile                 # Docker configuration
+├── launch.json                # VS Code debug configuration
+├── nest-cli.json              # NestJS CLI configuration
+├── package.json               # Node.js package configuration
+├── package-lock.json          # Node.js package lock
+├── README.md                  # Project documentation
+├── tsconfig.json              # TypeScript configuration
+└── tsconfig.build.json        # TypeScript build configuration
+```
+
+## Testing
+
+### Unit Tests
+
+Run unit tests with Jest:
 
 ```bash
-$ npm install -g mau
-$ mau deploy
+npm run test
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### End-to-End Tests
 
-## Resources
+Run E2E tests that test the entire application flow:
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+npm run test:e2e
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Test Coverage
 
-## Support
+Generate test coverage reports:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+npm run test:cov
+```
 
-## Stay in touch
+## Building for Production
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Build the application for production deployment:
+
+```bash
+npm run build
+```
+
+The compiled files will be in the `dist/` directory.
+
+## Docker Deployment
+
+You can run the application in a Docker container:
+
+1. **Build the Docker image**:
+
+   ```bash
+   docker-compose build
+   ```
+
+2. **Run the container**:
+   ```bash
+   docker-compose up -d
+   ```
+
+The API will be available at http://localhost:3333.
+
+## Role-Based Access Control
+
+The application implements role-based access control with two main roles:
+
+### User Role
+
+- Register and manage personal account
+- Search for flights
+- Create, view, and manage personal bookings
+- Update personal profile information
+
+### Admin Role
+
+- Access to all user functionalities
+- Manage all flight data (create, update, delete flights)
+- View and manage all user bookings
+- Access user management features
+- View system statistics and analytics
+- Special admin-only endpoints
+
+Admin authentication is required for accessing admin-specific routes, which is handled by the roles guard and roles decorator.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+[MIT License](LICENSE)
