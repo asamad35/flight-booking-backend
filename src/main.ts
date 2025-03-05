@@ -12,7 +12,7 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:3000',
-      'https://flight-booking-frontend-ten.vercel.app/',
+      'https://flight-booking-frontend-ten.vercel.app',
     ], // Add your frontend URLs
     credentials: true, // Allow cookies and authentication headers
   });
