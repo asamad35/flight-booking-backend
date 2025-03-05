@@ -20,11 +20,7 @@ export class UserRepository {
     if (error) throw new Error(`Error fetching users: ${error.message}`);
 
     // Filter out any null mappings
-    return (
-      (data
-        ?.map((user) => this.mapUser(user))
-        .filter(Boolean) as UserResponseDto[]) || []
-    );
+    return data;
   }
 
   async findById(id: string): Promise<UserResponseDto | null> {
@@ -39,7 +35,7 @@ export class UserRepository {
       throw new Error(`Error fetching user: ${error.message}`);
     }
 
-    return this.mapUser(data);
+    return data;
   }
 
   async findByEmail(email: string): Promise<UserResponseDto | null> {
@@ -53,7 +49,7 @@ export class UserRepository {
       throw new Error(`Error finding user: ${error.message}`);
     }
 
-    return this.mapUser(data);
+    return data;
   }
 
   async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
@@ -75,12 +71,7 @@ export class UserRepository {
 
     if (error) throw new Error(`Error creating user: ${error.message}`);
 
-    const mappedUser = this.mapUser(data);
-    if (!mappedUser) {
-      throw new Error('Failed to map created user');
-    }
-
-    return mappedUser;
+    return data;
   }
 
   async update(
@@ -112,7 +103,7 @@ export class UserRepository {
       .single();
 
     if (error) throw new Error(`Error updating user: ${error.message}`);
-    return this.mapUser(data);
+    return data;
   }
 
   async delete(id: string): Promise<boolean> {
@@ -123,20 +114,6 @@ export class UserRepository {
   }
 
   // Map database fields to our DTO (Supabase uses snake_case)
-  private mapUser(dbUser: any): UserResponseDto | null {
-    if (!dbUser) return null;
-
-    const user = new UserResponseDto();
-    user.id = dbUser.id;
-    user.email = dbUser.email;
-    user.firstName = dbUser.first_name;
-    user.lastName = dbUser.last_name;
-    user.role = dbUser.role;
-    user.createdAt = new Date(dbUser.created_at);
-    user.updatedAt = new Date(dbUser.updated_at);
-
-    return user;
-  }
 
   async listUsers() {
     // const { data, error } = await this.supabase.auth.admin.listUsers();

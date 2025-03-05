@@ -48,10 +48,10 @@ export class FlightDto {
 
   // Matches frontend parameters
   @IsString()
-  from?: string;
+  from: string;
 
   @IsString()
-  to?: string;
+  to: string;
 
   @IsNumber()
   passengers: number; // Number of passengers for booking

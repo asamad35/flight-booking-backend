@@ -8,8 +8,7 @@ import {
   Param,
   Query,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { Request } from 'express';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { User } from '../decorators/user.decorator';
 import { FlightsService } from './flights.service';
 import { FlightDto } from './dto/flight.dto';
