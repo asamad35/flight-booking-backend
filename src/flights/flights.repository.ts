@@ -25,11 +25,19 @@ export class FlightsRepository {
 
   async findAll(filters?: FlightSearchDto): Promise<Flight[]> {
     // get flight from supabase
-    const { data, error } = await this.supabase
-      .from('flights')
-      .select('*')
-      .eq('departure_airport', filters?.from)
-      .eq('arrival_airport', filters?.to);
+    const query = this.supabase.from('flights').select('*');
+
+    // Only apply from/to filters if useFilter is true (default) and the filter values exist
+    if (filters?.useFilter !== false && filters?.from) {
+      query.eq('departure_airport', filters.from);
+    }
+
+    if (filters?.useFilter !== false && filters?.to) {
+      query.eq('arrival_airport', filters.to);
+    }
+
+    const { data, error } = await query;
+
     if (error) {
       throw new HttpException(
         `Error fetching flights: ${error.message}`,

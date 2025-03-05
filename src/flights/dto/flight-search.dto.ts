@@ -236,4 +236,18 @@ export class FlightSearchDto {
     typeof value === 'string' ? parseFloat(value) : value,
   )
   maxPrice?: number;
+
+  @ApiProperty({
+    description: 'Whether to apply from/to filtering',
+    example: true,
+    required: false,
+    type: Boolean,
+    default: true,
+  })
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (value === undefined || value === null) return true;
+    return value === 'true' || value === true;
+  })
+  useFilter?: boolean = true;
 }
