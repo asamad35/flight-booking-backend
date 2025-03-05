@@ -49,57 +49,48 @@ export class FlightsService {
     return { bookings };
   }
 
-  async getBookingById(
-    bookingId: string,
-    userId: string,
-  ): Promise<{ booking: BookingDto }> {
-    const booking = await this.flightsRepository.findBookingById(
-      bookingId,
-      userId,
-    );
-    return { booking };
+  async getBookingsByUserId(userId: string): Promise<BookingDto[]> {
+    const booking = await this.flightsRepository.getBookingsByUserId(userId);
+    return booking;
   }
 
-  async generateTicket(
-    bookingId: string,
-    userId: string,
-  ): Promise<{ ticketDetails: any }> {
-    // Get the booking first
-    const booking = await this.flightsRepository.findBookingById(
-      bookingId,
-      userId,
-    );
+  // async generateTicket(
+  //   bookingId: string,
+  //   userId: string,
+  // ): Promise<{ ticketDetails: any }> {
+  //   // Get the booking first
+  //   const booking = await this.flightsRepository.findBookingById(bookingId);
 
-    if (!booking) {
-      throw new Error('Booking not found');
-    }
+  //   if (!booking) {
+  //     throw new Error('Booking not found');
+  //   }
 
-    // Generate ticket details based on the booking
-    const ticketDetails = {
-      ticketNumber: `TKT-${booking.bookingId}`,
-      bookingId: booking.bookingId,
-      bookingDate: booking.bookingDate,
-      passengerDetails: booking.passengerDetails,
-      flightDetails: {
-        airline: booking.airline,
-        flightNumber: booking.flightNumber,
-        from: booking.from,
-        to: booking.to,
-        departureDate: booking.departureDate,
-        departureTime: booking.departureTime,
-        arrivalTime: booking.arrivalTime,
-        cabin: booking.cabinClass,
-      },
-      boardingInstructions: {
-        checkInTime: '2 hours before departure',
-        boardingGate: 'To be announced',
-        baggageAllowance: booking.cabinClass === 'Economy' ? '15kg' : '30kg',
-        boardingTime: '30 minutes before departure',
-      },
-      qrCode: `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${booking.bookingId}`,
-      status: booking.status || 'Confirmed',
-    };
+  //   // Generate ticket details based on the booking
+  //   const ticketDetails = {
+  //     ticketNumber: `TKT-${booking.bookingId}`,
+  //     bookingId: booking.bookingId,
+  //     bookingDate: booking.bookingDate,
+  //     passengerDetails: booking.passengerDetails,
+  //     flightDetails: {
+  //       airline: booking.airline,
+  //       flightNumber: booking.flightNumber,
+  //       from: booking.from,
+  //       to: booking.to,
+  //       departureDate: booking.departureDate,
+  //       departureTime: booking.departureTime,
+  //       arrivalTime: booking.arrivalTime,
+  //       cabin: booking.cabinClass,
+  //     },
+  //     boardingInstructions: {
+  //       checkInTime: '2 hours before departure',
+  //       boardingGate: 'To be announced',
+  //       baggageAllowance: booking.cabinClass === 'Economy' ? '15kg' : '30kg',
+  //       boardingTime: '30 minutes before departure',
+  //     },
+  //     qrCode: `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${booking.bookingId}`,
+  //     status: booking.status || 'Confirmed',
+  //   };
 
-    return { ticketDetails };
-  }
+  //   return { ticketDetails };
+  // }
 }

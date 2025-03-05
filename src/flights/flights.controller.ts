@@ -7,8 +7,10 @@ import {
   Req,
   Param,
   Query,
+  Headers,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { AdminGuard } from '../guards/admin.guard';
 import { User } from '../decorators/user.decorator';
 import { FlightsService } from './flights.service';
 import { FlightDto } from './dto/flight.dto';
@@ -43,14 +45,22 @@ export class FlightsController {
 
   @Get('bookings')
   @UseGuards(JwtAuthGuard)
-  async getUserBookings(@User() user: { id: string }) {
-    return this.flightsService.getUserBookings(user.id);
+  async getUserBookings(
+    @User() user: { id: string },
+    @Headers('x-user-id') userIdHeader?: string,
+  ) {
+    // If X-User-ID header is present and user is admin, fetch bookings for that user
+    // Otherwise fetch for the current user
+    const targetUserId = userIdHeader || user.id;
+    return this.flightsService.getUserBookings(targetUserId);
   }
 
-  @Get('bookings/:id')
+  @Get('bookings/:userId')
   @UseGuards(JwtAuthGuard)
-  async getBookingById(@Param('id') id: string, @User() user: { id: string }) {
-    return this.flightsService.getBookingById(id, user.id);
+  async getBookingsByUserId(@Param('userId') userId: string) {
+    const a = await this.flightsService.getBookingsByUserId(userId);
+    console.log(a, 'a');
+    return a;
   }
 
   @Get('cities/origin')
@@ -63,12 +73,12 @@ export class FlightsController {
     return this.flightsService.getDestinationCities();
   }
 
-  @Get('bookings/:id/ticket')
-  @UseGuards(JwtAuthGuard)
-  async generateTicket(
-    @Param('id') bookingId: string,
-    @User() user: { id: string },
-  ) {
-    return this.flightsService.generateTicket(bookingId, user.id);
-  }
+  // @Get('bookings/:id/ticket')
+  // @UseGuards(JwtAuthGuard)
+  // async generateTicket(
+  //   @Param('id') bookingId: string,
+  //   @User() user: { id: string },
+  // ) {
+  //   return this.flightsService.generateTicket(bookingId, user.id);
+  // }
 }

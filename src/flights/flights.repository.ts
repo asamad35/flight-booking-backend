@@ -165,54 +165,23 @@ export class FlightsRepository {
     }
   }
 
-  async findBookingById(
-    bookingId: string,
-    userId: string,
-  ): Promise<BookingDto> {
-    try {
-      const { data, error } = await this.supabase
-        .from('bookings')
-        .select('*')
-        .eq('booking_id', bookingId)
-        .eq('user_id', userId)
-        .single();
+  async getBookingsByUserId(userId: string): Promise<BookingDto[]> {
+    const { data, error } = await this.supabase
+      .from('bookings')
+      .select('*')
+      .eq('user_id', userId);
 
-      if (error) {
-        throw new HttpException(
-          `Error fetching booking: ${error.message}`,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return [] as unknown as Promise<BookingDto[]>;
       }
-
-      if (!data) {
-        throw new HttpException(
-          `Booking with ID ${bookingId} not found`,
-          HttpStatus.NOT_FOUND,
-        );
-      }
-
-      // Convert to BookingDto format
-      return data;
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-
-      // Fallback to mock data
-      const booking = this.bookings.find(
-        (booking) =>
-          booking.bookingId === bookingId && booking.userId === userId,
+      throw new HttpException(
+        `Error fetching booking: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
-
-      if (!booking) {
-        throw new HttpException(
-          `Booking with ID ${bookingId} not found`,
-          HttpStatus.NOT_FOUND,
-        );
-      }
-
-      return booking;
     }
+
+    return data;
   }
 
   async getOriginCities(): Promise<string[]> {
