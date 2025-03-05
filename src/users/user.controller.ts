@@ -17,15 +17,36 @@ import {
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { AdminGuard } from '../guards/admin.guard';
-import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
+import { CreateUserDto, UpdateUserDto, UserResponseDto } from './dto/user.dto';
 import { Request } from 'express';
 import { UserPayload } from '../guards/jwt-auth.guard';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiParam,
+  ApiBody,
+} from '@nestjs/swagger';
 
+@ApiTags('users')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   // Get current user profile
+  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiResponse({
+    status: 200,
+    description: "Returns the current user's profile",
+    type: UserResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - user not authenticated',
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiBearerAuth('JWT-auth')
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async getCurrentUser(@Req() request: Request) {
@@ -44,6 +65,18 @@ export class UserController {
   }
 
   // Get all users - Admin only
+  @ApiOperation({ summary: 'Get all users (Admin only)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns a list of all users',
+    type: [UserResponseDto],
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - user not authenticated',
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden - user is not an admin' })
+  @ApiBearerAuth('JWT-auth')
   @UseGuards(AdminGuard)
   @Get()
   async findAll() {
@@ -51,6 +84,20 @@ export class UserController {
   }
 
   // Get user by ID - Admin or own user only
+  @ApiOperation({ summary: 'Get user by ID (Admin or own user only)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns the user with the specified ID',
+    type: UserResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - user not authenticated',
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden - not owner or admin' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiParam({ name: 'id', description: 'ID of the user to retrieve' })
+  @ApiBearerAuth('JWT-auth')
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findById(@Param('id') id: string, @Req() request: Request) {
@@ -84,6 +131,21 @@ export class UserController {
   // }
 
   // Update user - Admin or own user only
+  @ApiOperation({ summary: 'Update user (Admin or own user only)' })
+  @ApiResponse({
+    status: 200,
+    description: 'User has been successfully updated',
+    type: UserResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - user not authenticated',
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden - not owner or admin' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiParam({ name: 'id', description: 'ID of the user to update' })
+  @ApiBody({ type: UpdateUserDto })
+  @ApiBearerAuth('JWT-auth')
   @UseGuards(JwtAuthGuard)
   @Put(':id')
   async update(
@@ -113,6 +175,19 @@ export class UserController {
   }
 
   // Delete user - Admin only
+  @ApiOperation({ summary: 'Delete user (Admin only)' })
+  @ApiResponse({
+    status: 204,
+    description: 'User has been successfully deleted',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - user not authenticated',
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden - user is not an admin' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiParam({ name: 'id', description: 'ID of the user to delete' })
+  @ApiBearerAuth('JWT-auth')
   @UseGuards(AdminGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
